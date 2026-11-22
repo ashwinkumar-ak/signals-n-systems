@@ -1,0 +1,1963 @@
+<!DOCTYPE html>
+<html lang="en" class="scroll-smooth">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Signals &amp; Systems — Indian ECE Syllabus &amp; GATE Interactive Lab</title>
+
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif'],
+            mono: ['JetBrains Mono', 'ui-monospace', 'SFMono-Regular', 'Menlo', 'monospace']
+          },
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+              900: '#312e81'
+            }
+          }
+        }
+      }
+    };
+  </script>
+
+  <!-- Inter & JetBrains Mono Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+
+  <!-- MathJax Configuration & CDN -->
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      options: {
+        skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre', 'code']
+      },
+      startup: {
+        pageReady: () => {
+          return MathJax.startup.defaultPageReady();
+        }
+      }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    /* Subtle custom scrollbar & range slider polish */
+    ::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+    }
+    ::-webkit-scrollbar-track {
+      background: transparent;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: rgba(100, 116, 139, 0.35);
+      border-radius: 9999px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(100, 116, 139, 0.55);
+    }
+    canvas.sim-canvas {
+      display: block;
+      width: 100%;
+      touch-action: none;
+    }
+  </style>
+</head>
+<body class="bg-slate-50 text-slate-800 dark:bg-slate-950 dark:text-slate-100 font-sans antialiased selection:bg-indigo-500 selection:text-white">
+
+  <!-- Top Sticky Header -->
+  <header class="sticky top-0 z-40 bg-white/90 dark:bg-slate-900/90 backdrop-blur-md border-b border-slate-200 dark:border-slate-800">
+    <div class="max-w-7xl mx-auto px-3 sm:px-6 h-16 flex items-center justify-between gap-2">
+      <div class="flex items-center gap-2.5 min-w-0">
+        <!-- Mobile Sidebar Toggle -->
+        <button id="mobile-menu-btn" type="button" aria-label="Toggle navigation menu"
+          class="lg:hidden p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 hover:bg-slate-200 dark:hover:bg-slate-700 transition">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+
+        <!-- Brand Mark -->
+        <div class="w-9 h-9 rounded-xl bg-gradient-to-br from-indigo-600 to-violet-600 flex items-center justify-center text-white font-mono font-bold text-sm shadow-sm shrink-0">
+          x(t)
+        </div>
+        <div class="truncate">
+          <div class="flex items-center gap-2">
+            <span class="font-bold text-sm sm:text-base tracking-tight text-slate-900 dark:text-white truncate">
+              Signals &amp; Systems
+            </span>
+            <span class="hidden sm:inline-flex items-center px-2 py-0.5 rounded-full text-[11px] font-semibold bg-indigo-50 text-indigo-700 dark:bg-indigo-950 dark:text-indigo-300 border border-indigo-200 dark:border-indigo-800">
+              ECE • AICTE / VTU / GATE
+            </span>
+          </div>
+          <p class="text-[11px] text-slate-500 dark:text-slate-400 truncate hidden md:block">
+            Interactive Theory, Visualizers &amp; Exam Prep for Indian Engineering Undergraduates
+          </p>
+        </div>
+      </div>
+
+      <!-- Right Controls -->
+      <div class="flex items-center gap-2 shrink-0">
+        <a href="#quiz-section"
+          class="hidden sm:inline-flex items-center gap-1.5 px-3 py-2 rounded-xl text-xs font-semibold bg-indigo-600 hover:bg-indigo-700 text-white shadow-sm transition">
+          <span>GATE / Sem Quiz</span>
+        </a>
+        <button id="theme-toggle-btn" type="button" aria-label="Toggle dark or light mode"
+          class="p-2.5 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-amber-300 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition">
+          <!-- Sun icon (shown in dark mode) -->
+          <svg id="sun-icon" class="w-5 h-5 hidden dark:block" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
+          </svg>
+          <!-- Moon icon (shown in light mode) -->
+          <svg id="moon-icon" class="w-5 h-5 block dark:hidden" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Compact Top Quick-Jump Strip on Medium/Small Screens -->
+    <nav aria-label="Module quick links" class="lg:hidden flex items-center gap-1.5 overflow-x-auto px-3 py-2 border-t border-slate-100 dark:border-slate-800/80 text-xs">
+      <a href="#mod1" class="px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 font-medium whitespace-nowrap">1. Classification</a>
+      <a href="#mod2" class="px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 font-medium whitespace-nowrap">2. Standard Signals</a>
+      <a href="#mod3" class="px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 font-medium whitespace-nowrap">3. LTI &amp; Convolution</a>
+      <a href="#mod4" class="px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 font-medium whitespace-nowrap">4. Fourier Series &amp; TF</a>
+      <a href="#mod5" class="px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 font-medium whitespace-nowrap">5. Laplace &amp; Z-Transform</a>
+      <a href="#mod6" class="px-2.5 py-1.5 rounded-lg bg-slate-100 dark:bg-slate-800 hover:bg-indigo-100 dark:hover:bg-indigo-900/50 font-medium whitespace-nowrap">6. Sampling &amp; GATE</a>
+      <a href="#quiz-section" class="px-2.5 py-1.5 rounded-lg bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-semibold whitespace-nowrap">Quiz</a>
+    </nav>
+  </header>
+
+  <!-- Mobile Drawer Backdrop -->
+  <div id="mobile-drawer-backdrop" class="fixed inset-0 z-40 bg-slate-950/50 hidden lg:hidden"></div>
+
+  <!-- Main Shell: Sidebar + Content -->
+  <div class="max-w-7xl mx-auto flex flex-col lg:flex-row">
+
+    <!-- Left Sidebar Navigation (Desktop Sticky / Mobile Slide-over) -->
+    <aside id="sidebar-nav"
+      class="fixed lg:sticky top-16 left-0 z-40 h-[calc(100vh-4rem)] w-72 shrink-0 bg-white dark:bg-slate-900 border-r border-slate-200 dark:border-slate-800 transform -translate-x-full lg:translate-x-0 transition-transform duration-200 ease-out overflow-y-auto p-4">
+      <div class="text-[11px] font-bold uppercase tracking-wider text-slate-400 dark:text-slate-500 px-3 mb-2">
+        ECE Syllabus Modules
+      </div>
+      <ul class="space-y-1 text-sm">
+        <li>
+          <a href="#hero" class="nav-link flex items-center justify-between px-3 py-2.5 rounded-xl font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+            <span>Course Overview</span>
+            <span class="text-xs font-mono text-slate-400">00</span>
+          </a>
+        </li>
+        <li>
+          <a href="#mod1" class="nav-link flex items-center justify-between px-3 py-2.5 rounded-xl font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+            <span>Classification &amp; Properties</span>
+            <span class="text-xs font-mono text-indigo-600 dark:text-indigo-400">M1</span>
+          </a>
+        </li>
+        <li>
+          <a href="#mod2" class="nav-link flex items-center justify-between px-3 py-2.5 rounded-xl font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+            <span>Singularity &amp; Time Ops</span>
+            <span class="text-xs font-mono text-indigo-600 dark:text-indigo-400">M2</span>
+          </a>
+        </li>
+        <li>
+          <a href="#mod3" class="nav-link flex items-center justify-between px-3 py-2.5 rounded-xl font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+            <span>LTI Systems &amp; Convolution</span>
+            <span class="text-xs font-mono text-indigo-600 dark:text-indigo-400">M3</span>
+          </a>
+        </li>
+        <li>
+          <a href="#mod4" class="nav-link flex items-center justify-between px-3 py-2.5 rounded-xl font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+            <span>Fourier Series &amp; Transform</span>
+            <span class="text-xs font-mono text-indigo-600 dark:text-indigo-400">M4</span>
+          </a>
+        </li>
+        <li>
+          <a href="#mod5" class="nav-link flex items-center justify-between px-3 py-2.5 rounded-xl font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+            <span>Laplace &amp; Z-Transform</span>
+            <span class="text-xs font-mono text-indigo-600 dark:text-indigo-400">M5</span>
+          </a>
+        </li>
+        <li>
+          <a href="#mod6" class="nav-link flex items-center justify-between px-3 py-2.5 rounded-xl font-medium text-slate-700 dark:text-slate-300 hover:bg-slate-100 dark:hover:bg-slate-800 transition">
+            <span>Sampling &amp; GATE Tricks</span>
+            <span class="text-xs font-mono text-indigo-600 dark:text-indigo-400">M6</span>
+          </a>
+        </li>
+        <li class="pt-2 mt-2 border-t border-slate-200 dark:border-slate-800">
+          <a href="#quiz-section" class="nav-link flex items-center justify-between px-3 py-2.5 rounded-xl font-semibold text-indigo-700 dark:text-indigo-300 bg-indigo-50/80 dark:bg-indigo-950/50 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 transition">
+            <span>Interactive Self-Test</span>
+            <span class="text-xs font-mono">MCQ</span>
+          </a>
+        </li>
+      </ul>
+
+      <!-- Syllabus Mapping Note -->
+      <div class="mt-6 p-3.5 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700/80 text-xs space-y-1.5">
+        <p class="font-semibold text-slate-800 dark:text-slate-200">Indian University Alignment</p>
+        <p class="text-slate-500 dark:text-slate-400 leading-relaxed">
+          Covers 3rd/4th-semester ECE core syllabi (AICTE model curriculum, VTU, Anna Univ., Mumbai Univ., MAKAUT, JNTU) plus GATE &amp; ESE fundamentals.
+        </p>
+      </div>
+    </aside>
+
+    <!-- Main Content Area -->
+    <main class="flex-1 min-w-0 px-3 sm:px-6 lg:px-8 py-6 sm:py-8 space-y-12">
+
+      <!-- Hero Section -->
+      <section id="hero" class="rounded-3xl bg-gradient-to-br from-indigo-600 via-indigo-700 to-slate-900 text-white p-6 sm:p-10 shadow-lg relative overflow-hidden">
+        <div class="relative z-10 max-w-3xl space-y-4">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-sm text-xs font-medium text-indigo-100">
+            <span>B.Tech / B.E. Electronics &amp; Communication Engineering</span>
+          </div>
+          <h1 class="text-2xl sm:text-4xl font-extrabold tracking-tight leading-tight">
+            Signals &amp; Systems: From Time-Domain Intuition to Transform Mastery
+          </h1>
+          <p class="text-sm sm:text-base text-indigo-100/90 leading-relaxed">
+            A practical, exam-ready visual companion designed for Indian ECE students. Inspect signal properties, manipulate waveforms in time, step through discrete &amp; continuous convolution, explore Fourier &amp; Laplace/Z-plane poles, and test your GATE readiness.
+          </p>
+          <div class="flex flex-wrap gap-2.5 pt-2">
+            <a href="#mod1" class="px-4 py-2.5 rounded-xl bg-white text-indigo-700 hover:bg-indigo-50 font-semibold text-xs sm:text-sm transition shadow">
+              Start Module 1
+            </a>
+            <a href="#mod3" class="px-4 py-2.5 rounded-xl bg-indigo-500/40 hover:bg-indigo-500/60 border border-white/25 text-white font-semibold text-xs sm:text-sm transition">
+              Convolution Visualizer
+            </a>
+            <a href="#mod5" class="px-4 py-2.5 rounded-xl bg-indigo-500/40 hover:bg-indigo-500/60 border border-white/25 text-white font-semibold text-xs sm:text-sm transition">
+              s &amp; z Pole-Zero Lab
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- MODULE 1: CLASSIFICATION OF SIGNALS & SYSTEMS                         -->
+      <!-- ===================================================================== -->
+      <section id="mod1" class="scroll-mt-24 space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-4">
+          <div>
+            <span class="text-xs font-mono font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">Module 01</span>
+            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mt-0.5">
+              Classification of Signals &amp; Systems
+            </h2>
+          </div>
+          <span class="text-xs text-slate-500 dark:text-slate-400">Energy/Power • Periodicity • LTI • Causality • Stability</span>
+        </div>
+
+        <!-- Signal Classification Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-4">
+          <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 shadow-sm space-y-2">
+            <h3 class="font-bold text-sm text-indigo-600 dark:text-indigo-400">1. CT vs. DT Signals</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+              <strong>Continuous-Time (CT)</strong> $x(t)$ is defined for all real $t \in \mathbb{R}$. <strong>Discrete-Time (DT)</strong> $x[n]$ is defined only at integer sample indices $n \in \mathbb{Z}$.
+            </p>
+          </div>
+
+          <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 shadow-sm space-y-2">
+            <h3 class="font-bold text-sm text-indigo-600 dark:text-indigo-400">2. Energy vs. Power</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+              Normalized Energy: $E = \int_{-\infty}^{\infty} |x(t)|^2 dt$ (or $\sum |x[n]|^2$).<br/>
+              Average Power: $P = \lim_{T\to\infty} \frac{1}{2T}\int_{-T}^{T} |x(t)|^2 dt$.<br/>
+              <em>Energy signal:</em> $0 &lt; E &lt; \infty \implies P = 0$. <em>Power signal:</em> $0 &lt; P &lt; \infty \implies E = \infty$.
+            </p>
+          </div>
+
+          <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 shadow-sm space-y-2">
+            <h3 class="font-bold text-sm text-indigo-600 dark:text-indigo-400">3. Periodic vs. Aperiodic</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+              CT signal is periodic with fundamental period $T_0 &gt; 0$ if $x(t + T_0) = x(t)$.<br/>
+              DT signal is periodic with integer $N_0 &gt; 0$ if $x[n + N_0] = x[n]$. Note: $\cos(\omega_0 n)$ is periodic iff $\frac{2\pi}{\omega_0}$ is a <strong>rational number</strong>!
+            </p>
+          </div>
+
+          <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 shadow-sm space-y-2">
+            <h3 class="font-bold text-sm text-indigo-600 dark:text-indigo-400">4. Even &amp; Odd Symmetry</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+              Even: $x(-t) = x(t)$, $x_e(t) = \frac{1}{2}[x(t) + x(-t)]$.<br/>
+              Odd: $x(-t) = -x(t)$, $x_o(t) = \frac{1}{2}[x(t) - x(-t)]$.<br/>
+              Every signal decomposes uniquely as $x(t) = x_e(t) + x_o(t)$.
+            </p>
+          </div>
+        </div>
+
+        <!-- System Properties Grid -->
+        <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-sm space-y-4">
+          <div class="flex flex-wrap items-center justify-between gap-2">
+            <h3 class="text-base sm:text-lg font-bold text-slate-900 dark:text-white">
+              Core System Properties (Crucial for 10-Mark University &amp; GATE Questions)
+            </h3>
+            <span class="px-2.5 py-1 rounded-lg text-xs font-mono bg-amber-50 dark:bg-amber-950/60 text-amber-700 dark:text-amber-300 border border-amber-200 dark:border-amber-800">
+              Superposition + Shift
+            </span>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs sm:text-sm">
+            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/70 space-y-1.5">
+              <div class="font-bold text-slate-900 dark:text-white">Linearity</div>
+              <p class="text-slate-600 dark:text-slate-300 text-xs leading-relaxed">
+                For $a x_1(t) + b x_2(t) \to y(t)$, system is linear iff $y(t) = a y_1(t) + b y_2(t)$ for all inputs and scalars $a, b$. Watch out for squaring, $|x(t)|$, or non-zero initial conditions!
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/70 space-y-1.5">
+              <div class="font-bold text-slate-900 dark:text-white">Time-Invariance (TI)</div>
+              <p class="text-slate-600 dark:text-slate-300 text-xs leading-relaxed">
+                If $x(t) \to y(t)$, then $x(t - t_0) \to y(t - t_0)$. Time-varying scaling like $y(t) = t\,x(t)$ or $y[n] = x[-n]$ is <strong>time-varying</strong>.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/70 space-y-1.5">
+              <div class="font-bold text-slate-900 dark:text-white">Causality</div>
+              <p class="text-slate-600 dark:text-slate-300 text-xs leading-relaxed">
+                Output $y(t_0)$ depends only on present and past inputs ($t \le t_0$). $y(t) = x(t+1)$ is <strong>non-causal</strong>; $y(t) = x(-t)$ is non-causal for $t &lt; 0$.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/70 space-y-1.5">
+              <div class="font-bold text-slate-900 dark:text-white">Memory (Static vs. Dynamic)</div>
+              <p class="text-slate-600 dark:text-slate-300 text-xs leading-relaxed">
+                <strong>Static (Memoryless)</strong> systems depend only on current input, e.g., $y(t) = 5x(t)$. Integrators, differentiators, and delays are <strong>dynamic</strong> (have memory).
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/70 space-y-1.5">
+              <div class="font-bold text-slate-900 dark:text-white">BIBO Stability</div>
+              <p class="text-slate-600 dark:text-slate-300 text-xs leading-relaxed">
+                Bounded-Input Bounded-Output: if $|x(t)| \le M_x &lt; \infty$ for all $t$, then $|y(t)| \le M_y &lt; \infty$. An ideal integrator $y(t) = \int_{-\infty}^t x(\tau)d\tau$ is <strong>BIBO unstable</strong>.
+              </p>
+            </div>
+
+            <div class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200/80 dark:border-slate-700/70 space-y-1.5">
+              <div class="font-bold text-slate-900 dark:text-white">Invertibility</div>
+              <p class="text-slate-600 dark:text-slate-300 text-xs leading-relaxed">
+                Distinct inputs must produce distinct outputs so an inverse system recovers $x(t)$ from $y(t)$. $y(t) = x^2(t)$ is <strong>not invertible</strong>.
+              </p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Interactive Lab 1: Signal & System Classifier -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <!-- Energy/Power & Periodicity Verifier -->
+          <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-sm space-y-4">
+            <div class="flex items-center justify-between">
+              <h3 class="font-bold text-base text-slate-900 dark:text-white">
+                Interactive Verifier: Energy, Power &amp; Periodicity
+              </h3>
+              <span class="text-[11px] font-mono px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-300">Lab 1A</span>
+            </div>
+
+            <div class="space-y-3 text-xs sm:text-sm">
+              <label class="block font-medium text-slate-700 dark:text-slate-300">Select a test signal</label>
+              <select id="sig-classify-select" class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3.5 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <option value="exp_decay">x(t) = 3 e^{-2t} u(t) — Causal decaying exponential</option>
+                <option value="dc_const">x(t) = 4 — Constant DC signal</option>
+                <option value="ct_sine">x(t) = 5 cos(6π t + π/4) — Continuous sinusoid</option>
+                <option value="dt_cos_rat">x[n] = 2 cos((2π/5) n) — Discrete sinusoid (rational freq)</option>
+                <option value="dt_cos_irrat">x[n] = 2 cos(n) — Discrete sinusoid (ω = 1 rad/sample)</option>
+                <option value="ramp_step">x(t) = t u(t) — Unit ramp signal</option>
+              </select>
+            </div>
+
+            <div id="sig-classify-output" class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 space-y-2 text-xs sm:text-sm">
+              <!-- Populated via JS -->
+            </div>
+          </div>
+
+          <!-- System Property Tester -->
+          <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-sm space-y-4">
+            <div class="flex items-center justify-between">
+              <h3 class="font-bold text-base text-slate-900 dark:text-white">
+                Interactive Tester: System Properties
+              </h3>
+              <span class="text-[11px] font-mono px-2 py-0.5 rounded bg-indigo-50 dark:bg-indigo-950 text-indigo-600 dark:text-indigo-300">Lab 1B</span>
+            </div>
+
+            <div class="space-y-3 text-xs sm:text-sm">
+              <label class="block font-medium text-slate-700 dark:text-slate-300">Select a system input-output relation</label>
+              <select id="sys-test-select" class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3.5 py-2.5 text-sm font-medium focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                <option value="diff_eq">y(t) = 3 x(t) + 2 (dx/dt) — Linear, TI, Causal, Dynamic, BIBO Stable</option>
+                <option value="time_mult">y(t) = t · x(t) — Linear, Time-Varying, Causal, Static, Unstable</option>
+                <option value="square_sys">y(t) = [x(t)]² — Non-linear, TI, Causal, Static, BIBO Stable</option>
+                <option value="advance_sys">y[n] = x[n + 2] — Linear, TI, Non-Causal, Dynamic, BIBO Stable</option>
+                <option value="time_rev">y[n] = x[-n] — Linear, Time-Varying, Non-Causal, Dynamic, BIBO Stable</option>
+                <option value="integrator">y(t) = ∫_{-∞}^{t} x(τ) dτ — Linear, TI, Causal, Dynamic, Unstable</option>
+              </select>
+            </div>
+
+            <div id="sys-test-output" class="p-4 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 space-y-2 text-xs sm:text-sm">
+              <!-- Populated via JS -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- MODULE 2: STANDARD SIGNALS & TIME TRANSFORMATIONS                    -->
+      <!-- ===================================================================== -->
+      <section id="mod2" class="scroll-mt-24 space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-4">
+          <div>
+            <span class="text-xs font-mono font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">Module 02</span>
+            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mt-0.5">
+              Standard Singularity Signals &amp; Time Operations
+            </h2>
+          </div>
+          <span class="text-xs text-slate-500 dark:text-slate-400">$\delta(t), u(t), r(t)$ • Shifting • Scaling • Reversal</span>
+        </div>
+
+        <!-- Singularity Quick Reference -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 shadow-sm space-y-2">
+            <div class="font-bold text-sm text-slate-900 dark:text-white">Unit Impulse $\delta(t)$ / $\delta[n]$</div>
+            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+              CT: $\delta(t) = 0$ for $t \ne 0$, $\int_{-\infty}^{\infty}\delta(t)dt = 1$. Sifting property: $\int x(t)\delta(t-t_0)dt = x(t_0)$.<br/>
+              DT: $\delta[n] = 1$ for $n = 0$, and $0$ otherwise.
+            </p>
+          </div>
+          <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 shadow-sm space-y-2">
+            <div class="font-bold text-sm text-slate-900 dark:text-white">Unit Step $u(t)$ / $u[n]$</div>
+            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+              CT: $u(t) = 1$ for $t &gt; 0$, $0$ for $t &lt; 0$. Derivative of step is impulse: $\frac{d}{dt}u(t) = \delta(t)$.<br/>
+              DT: $u[n] = 1$ for $n \ge 0$, $0$ for $n &lt; 0$. First difference: $u[n] - u[n-1] = \delta[n]$.
+            </p>
+          </div>
+          <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 shadow-sm space-y-2">
+            <div class="font-bold text-sm text-slate-900 dark:text-white">Unit Ramp $r(t)$ &amp; Exponential</div>
+            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+              Ramp: $r(t) = t\,u(t) = \int_{-\infty}^t u(\tau)d\tau$; $\frac{d}{dt}r(t) = u(t)$.<br/>
+              Real exponential $e^{at}u(t)$ decays for $a &lt; 0$ and grows for $a &gt; 0$.
+            </p>
+          </div>
+        </div>
+
+        <!-- Interactive Time Transformation Visualizer -->
+        <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-sm space-y-5">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
+            <div>
+              <h3 class="font-bold text-base sm:text-lg text-slate-900 dark:text-white">
+                Interactive Waveform &amp; Time Transformation Lab: $y(t) = x(a t - t_0)$
+              </h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400">
+                Order rule in Indian exams: <strong>Shift first</strong> ($t \to t - t_0$), <strong>then scale/flip</strong> ($t \to a t$), or equivalently $a(t - t_0/a)$.
+              </p>
+            </div>
+            <div id="time-op-formula" class="font-mono text-xs sm:text-sm px-3 py-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-semibold">
+              y(t) = x(1.00t - 0.00)
+            </div>
+          </div>
+
+          <!-- Controls -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 text-xs sm:text-sm">
+            <div>
+              <label for="base-wave-select" class="block font-medium mb-1.5 text-slate-700 dark:text-slate-300">Base Signal $x(t)$</label>
+              <select id="base-wave-select" class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-xs sm:text-sm">
+                <option value="rect_pulse">Rectangular Pulse (t ∈ [-2, 2])</option>
+                <option value="ramp_causal">Causal Ramp r(t) = t·u(t) (clamped)</option>
+                <option value="step_causal">Unit Step u(t)</option>
+                <option value="exp_causal">Decaying Exp e^{-0.6t}u(t)</option>
+                <option value="tri_pulse">Triangular Pulse Λ(t/2)</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="shift-slider" class="flex justify-between font-medium mb-1.5 text-slate-700 dark:text-slate-300">
+                <span>Shift $t_0$</span>
+                <span id="shift-val" class="font-mono text-indigo-600 dark:text-indigo-400">0.0</span>
+              </label>
+              <input id="shift-slider" type="range" min="-4" max="4" step="0.5" value="0" class="w-full accent-indigo-600 cursor-pointer" />
+            </div>
+
+            <div>
+              <label for="scale-slider" class="flex justify-between font-medium mb-1.5 text-slate-700 dark:text-slate-300">
+                <span>Scaling $a$ (neg = flip)</span>
+                <span id="scale-val" class="font-mono text-indigo-600 dark:text-indigo-400">1.0</span>
+              </label>
+              <input id="scale-slider" type="range" min="-3" max="3" step="0.5" value="1" class="w-full accent-indigo-600 cursor-pointer" />
+            </div>
+
+            <div class="flex items-end">
+              <button id="reset-time-op-btn" type="button" class="w-full py-2.5 px-4 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 text-slate-800 dark:text-slate-200 font-semibold text-xs sm:text-sm border border-slate-200 dark:border-slate-700 transition">
+                Reset Parameters
+              </button>
+            </div>
+          </div>
+
+          <!-- Canvas -->
+          <div class="rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950">
+            <canvas id="time-op-canvas" class="sim-canvas h-64 sm:h-72"></canvas>
+          </div>
+          <div class="flex flex-wrap items-center gap-4 text-xs text-slate-500 dark:text-slate-400">
+            <span class="inline-flex items-center gap-1.5"><span class="w-3 h-0.5 bg-slate-400 inline-block"></span> Original $x(t)$</span>
+            <span class="inline-flex items-center gap-1.5"><span class="w-3 h-1 bg-indigo-600 inline-block rounded"></span> Transformed $y(t)$</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- MODULE 3: LTI SYSTEMS & CONVOLUTION                                   -->
+      <!-- ===================================================================== -->
+      <section id="mod3" class="scroll-mt-24 space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-4">
+          <div>
+            <span class="text-xs font-mono font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">Module 03</span>
+            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mt-0.5">
+              LTI Systems &amp; Convolution
+            </h2>
+          </div>
+          <span class="text-xs text-slate-500 dark:text-slate-400">Convolution Sum &amp; Integral • Impulse Response $h(t)/h[n]$</span>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 shadow-sm space-y-2">
+            <h3 class="font-bold text-sm text-indigo-600 dark:text-indigo-400">Discrete-Time Convolution Sum</h3>
+            <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-200">
+              $$y[n] = x[n] * h[n] = \sum_{k=-\infty}^{\infty} x[k]\,h[n-k] = \sum_{k=-\infty}^{\infty} h[k]\,x[n-k]$$
+            </p>
+            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+              If $x[n]$ has length $N_1$ and $h[n]$ has length $N_2$ (finite duration), the linear convolution $y[n]$ has length $N_1 + N_2 - 1$.
+            </p>
+          </div>
+
+          <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 shadow-sm space-y-2">
+            <h3 class="font-bold text-sm text-indigo-600 dark:text-indigo-400">Continuous-Time Convolution Integral &amp; LTI Rules</h3>
+            <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-200">
+              $$y(t) = x(t) * h(t) = \int_{-\infty}^{\infty} x(\tau)\,h(t-\tau)\,d\tau$$
+            </p>
+            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+              <strong>Causal LTI:</strong> $h(t) = 0$ for $t &lt; 0$. <strong>BIBO Stable LTI:</strong> $\int_{-\infty}^{\infty}|h(t)|dt &lt; \infty$ (or $\sum |h[n]| &lt; \infty$). Cascaded LTI systems multiply or convolve: $h_{eq} = h_1 * h_2$.
+            </p>
+          </div>
+        </div>
+
+        <!-- Interactive Discrete Convolution Visualizer -->
+        <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-sm space-y-5">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <h3 class="font-bold text-base sm:text-lg text-slate-900 dark:text-white">
+                Interactive Step-by-Step Discrete Convolution Visualizer: $y[n] = \sum_k x[k]h[n-k]$
+              </h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400">
+                Step through output index $n$ to see $h[n-k]$ flip and shift across $x[k]$, and watch $y[n]$ accumulate.
+              </p>
+            </div>
+            <div id="conv-n-badge" class="font-mono text-xs sm:text-sm px-3 py-1.5 rounded-xl bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300 font-semibold">
+              n = 0 | y[0] = 0
+            </div>
+          </div>
+
+          <!-- Preset & Step Controls -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 items-center text-xs sm:text-sm">
+            <div>
+              <label for="conv-preset-select" class="block font-medium mb-1.5 text-slate-700 dark:text-slate-300">Select $x[n]$ and $h[n]$ pair</label>
+              <select id="conv-preset-select" class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-xs sm:text-sm">
+                <option value="box_box">x[n] = [1, 2, 1] (n=0..2), h[n] = [1, 1, 1] (n=0..2)</option>
+                <option value="step_exp">x[n] = u[n] (0..5), h[n] = (0.5)^n u[n] (0..5)</option>
+                <option value="signed_pair">x[n] = [2, -1, 3] (n=0..2), h[n] = [1, -2] (n=0..1)</option>
+              </select>
+            </div>
+
+            <div class="flex items-center gap-2 pt-4 md:pt-5">
+              <button id="conv-prev-btn" type="button" class="px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-semibold border border-slate-200 dark:border-slate-700 transition">
+                Prev n
+              </button>
+              <button id="conv-play-btn" type="button" class="px-4 py-2 rounded-xl bg-indigo-600 hover:bg-indigo-700 text-white font-semibold transition">
+                Auto Play
+              </button>
+              <button id="conv-next-btn" type="button" class="px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-semibold border border-slate-200 dark:border-slate-700 transition">
+                Next n
+              </button>
+            </div>
+
+            <div id="conv-sum-detail" class="p-3 rounded-xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 font-mono text-xs overflow-x-auto">
+              <!-- Calculation breakdown -->
+            </div>
+          </div>
+
+          <div class="rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950">
+            <canvas id="conv-canvas" class="sim-canvas h-72 sm:h-80"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- MODULE 4: FOURIER SERIES & FOURIER TRANSFORM                          -->
+      <!-- ===================================================================== -->
+      <section id="mod4" class="scroll-mt-24 space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-4">
+          <div>
+            <span class="text-xs font-mono font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">Module 04</span>
+            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mt-0.5">
+              Fourier Series &amp; Fourier Transform (CTFT &amp; DTFT)
+            </h2>
+          </div>
+          <span class="text-xs text-slate-500 dark:text-slate-400">CTFS • CTFT • DTFT • Parseval's Theorem</span>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 shadow-sm space-y-2">
+            <h3 class="font-bold text-sm text-indigo-600 dark:text-indigo-400">CT Fourier Series (CTFS)</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+              Periodic CT signal with $\omega_0 = \frac{2\pi}{T_0}$:
+              $$x(t) = \sum_{k=-\infty}^{\infty} c_k e^{jk\omega_0 t}, \quad c_k = \frac{1}{T_0}\int_{T_0} x(t)e^{-jk\omega_0 t}dt$$
+            </p>
+          </div>
+
+          <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 shadow-sm space-y-2">
+            <h3 class="font-bold text-sm text-indigo-600 dark:text-indigo-400">CT Fourier Transform (CTFT)</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+              Aperiodic CT signal:
+              $$X(\omega) = \int_{-\infty}^{\infty} x(t)e^{-j\omega t}dt, \quad x(t) = \frac{1}{2\pi}\int_{-\infty}^{\infty} X(\omega)e^{j\omega t}d\omega$$
+              Duality: rectangular pulse in time $\leftrightarrow$ $\text{sinc}$ in frequency.
+            </p>
+          </div>
+
+          <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 shadow-sm space-y-2">
+            <h3 class="font-bold text-sm text-indigo-600 dark:text-indigo-400">DTFT &amp; Parseval's Relation</h3>
+            <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+              DTFT is always $2\pi$-periodic in $\Omega$: $X(e^{j\Omega}) = \sum_{n=-\infty}^{\infty} x[n]e^{-j\Omega n}$.<br/>
+              Parseval (Energy): $\int_{-\infty}^{\infty}|x(t)|^2 dt = \frac{1}{2\pi}\int_{-\infty}^{\infty}|X(\omega)|^2 d\omega$.
+            </p>
+          </div>
+        </div>
+
+        <!-- Interactive Fourier Harmonic Synthesis & Spectrum Explorer -->
+        <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-sm space-y-5">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <h3 class="font-bold text-base sm:text-lg text-slate-900 dark:text-white">
+                Interactive Fourier Synthesis &amp; Line Spectrum Explorer
+              </h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400">
+                Observe Gibbs phenomenon near sharp jumps when truncating Fourier series to $N$ odd harmonics.
+              </p>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 text-xs sm:text-sm">
+            <div>
+              <label for="fourier-wave-select" class="block font-medium mb-1.5 text-slate-700 dark:text-slate-300">Target Periodic Waveform</label>
+              <select id="fourier-wave-select" class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3 py-2 text-xs sm:text-sm">
+                <option value="square">Square Wave (odd harmonics: 1/k)</option>
+                <option value="triangle">Triangle Wave (odd harmonics: (-1)^{(k-1)/2}/k^2)</option>
+                <option value="sawtooth">Sawtooth Wave (all harmonics: (-1)^{k+1}/k)</option>
+              </select>
+            </div>
+
+            <div>
+              <label for="harmonics-slider" class="flex justify-between font-medium mb-1.5 text-slate-700 dark:text-slate-300">
+                <span>Number of Harmonics Included</span>
+                <span id="harmonics-val" class="font-mono text-indigo-600 dark:text-indigo-400">5</span>
+              </label>
+              <input id="harmonics-slider" type="range" min="1" max="25" step="1" value="5" class="w-full accent-indigo-600 cursor-pointer" />
+            </div>
+          </div>
+
+          <div class="rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950">
+            <canvas id="fourier-canvas" class="sim-canvas h-72 sm:h-80"></canvas>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- MODULE 5: LAPLACE TRANSFORM & Z-TRANSFORM                             -->
+      <!-- ===================================================================== -->
+      <section id="mod5" class="scroll-mt-24 space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-4">
+          <div>
+            <span class="text-xs font-mono font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">Module 05</span>
+            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mt-0.5">
+              Laplace Transform (s-Plane) &amp; Z-Transform (z-Plane)
+            </h2>
+          </div>
+          <span class="text-xs text-slate-500 dark:text-slate-400">ROC Rules • Poles &amp; Zeros • Stability &amp; Causality</span>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+          <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 shadow-sm space-y-2">
+            <h3 class="font-bold text-sm text-indigo-600 dark:text-indigo-400">Laplace Transform &amp; s-Plane ROC</h3>
+            <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-200">
+              $$X(s) = \int_{-\infty}^{\infty} x(t)e^{-st}dt, \quad s = \sigma + j\omega$$
+            </p>
+            <ul class="text-xs text-slate-600 dark:text-slate-300 space-y-1 list-disc pl-4">
+              <li>ROC is always a vertical strip parallel to $j\omega$-axis and contains <strong>no poles</strong>.</li>
+              <li>Right-sided signal: $\text{Re}(s) &gt; \sigma_{\max}$; Left-sided: $\text{Re}(s) &lt; \sigma_{\min}$.</li>
+              <li>Causal LTI is BIBO stable iff all poles lie strictly in the <strong>Left Half Plane (LHP, $\text{Re}(s) &lt; 0$)</strong>.</li>
+            </ul>
+          </div>
+
+          <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 shadow-sm space-y-2">
+            <h3 class="font-bold text-sm text-indigo-600 dark:text-indigo-400">Z-Transform &amp; z-Plane ROC</h3>
+            <p class="text-xs sm:text-sm text-slate-700 dark:text-slate-200">
+              $$X(z) = \sum_{n=-\infty}^{\infty} x[n]z^{-n}, \quad z = r e^{j\Omega}$$
+            </p>
+            <ul class="text-xs text-slate-600 dark:text-slate-300 space-y-1 list-disc pl-4">
+              <li>ROC is a circular ring/annulus centered at origin with <strong>no poles</strong>.</li>
+              <li>Causal DT signal ($x[n]=0$ for $n&lt;0$): ROC is $|z| &gt; r_{\max}$ (exterior of outermost pole).</li>
+              <li>LTI is BIBO stable iff ROC includes the <strong>unit circle ($|z| = 1$)</strong>; causal + stable $\iff$ all poles inside $|z| &lt; 1$.</li>
+            </ul>
+          </div>
+        </div>
+
+        <!-- Interactive Pole-Zero Plotter -->
+        <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-sm space-y-5">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-2">
+            <div>
+              <h3 class="font-bold text-base sm:text-lg text-slate-900 dark:text-white">
+                Interactive z-Plane Pole-Zero &amp; Stability Explorer
+              </h3>
+              <p class="text-xs text-slate-500 dark:text-slate-400">
+                Click or tap directly on the z-plane canvas to add a <strong>Pole (×)</strong> or <strong>Zero (○)</strong>. Dashed circle is the Unit Circle $|z| = 1$.
+              </p>
+            </div>
+            <div id="pz-stability-badge" class="text-xs sm:text-sm font-semibold px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800">
+              Causal System: BIBO Stable
+            </div>
+          </div>
+
+          <div class="flex flex-wrap items-center gap-2.5 text-xs sm:text-sm">
+            <button id="mode-pole-btn" type="button" class="px-3.5 py-2 rounded-xl bg-indigo-600 text-white font-semibold shadow-sm transition">
+              Place Pole (×)
+            </button>
+            <button id="mode-zero-btn" type="button" class="px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-semibold border border-slate-200 dark:border-slate-700 transition">
+              Place Zero (○)
+            </button>
+            <button id="pz-preset-btn" type="button" class="px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 font-medium border border-slate-200 dark:border-slate-700 transition">
+              Load Resonator Example
+            </button>
+            <button id="pz-clear-btn" type="button" class="px-3.5 py-2 rounded-xl bg-rose-50 dark:bg-rose-950/60 hover:bg-rose-100 dark:hover:bg-rose-900/60 text-rose-700 dark:text-rose-300 font-medium border border-rose-200 dark:border-rose-800 transition">
+              Clear All
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-3 gap-5 items-start">
+            <div class="lg:col-span-2 rounded-2xl overflow-hidden border border-slate-200 dark:border-slate-800 bg-slate-50 dark:bg-slate-950">
+              <canvas id="pz-canvas" class="sim-canvas h-72 sm:h-80 cursor-crosshair"></canvas>
+            </div>
+            <div id="pz-readout" class="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/70 border border-slate-200 dark:border-slate-700 text-xs space-y-2.5">
+              <!-- Populated dynamically -->
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- MODULE 6: SAMPLING THEOREM & GATE / SEMESTER EXAM CHEAT SHEET        -->
+      <!-- ===================================================================== -->
+      <section id="mod6" class="scroll-mt-24 space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-2 border-b border-slate-200 dark:border-slate-800 pb-4">
+          <div>
+            <span class="text-xs font-mono font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">Module 06</span>
+            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mt-0.5">
+              Sampling Theorem &amp; GATE / University Exam Tricks
+            </h2>
+          </div>
+          <span class="text-xs text-slate-500 dark:text-slate-400">Nyquist Rate • Aliasing • High-Yield Formulas</span>
+        </div>
+
+        <!-- Nyquist Calculator -->
+        <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-sm space-y-4">
+          <h3 class="font-bold text-base sm:text-lg text-slate-900 dark:text-white">
+            Nyquist Rate &amp; Aliasing Frequency Calculator
+          </h3>
+          <p class="text-xs text-slate-600 dark:text-slate-300 leading-relaxed">
+            For a bandlimited signal with maximum frequency $f_m$ (in Hz): <strong>Nyquist Rate</strong> $f_N = 2 f_m$, <strong>Nyquist Sampling Interval</strong> $T_s = \frac{1}{2 f_m}$. If sampled at $f_s &lt; 2 f_m$, high-frequency components fold back (<strong>aliasing</strong>)!
+          </p>
+
+          <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 text-xs sm:text-sm">
+            <div>
+              <label for="fm-input" class="block font-medium mb-1.5 text-slate-700 dark:text-slate-300">Signal Max Freq $f_m$ (Hz)</label>
+              <input id="fm-input" type="number" min="1" max="100000" value="100" class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3.5 py-2 font-mono" />
+            </div>
+            <div>
+              <label for="fs-input" class="block font-medium mb-1.5 text-slate-700 dark:text-slate-300">Chosen Sampling Freq $f_s$ (Hz)</label>
+              <input id="fs-input" type="number" min="1" max="200000" value="150" class="w-full rounded-xl border border-slate-300 dark:border-slate-700 bg-slate-50 dark:bg-slate-800 px-3.5 py-2 font-mono" />
+            </div>
+            <div id="nyquist-result" class="p-3.5 rounded-xl bg-indigo-50/70 dark:bg-indigo-950/50 border border-indigo-200 dark:border-indigo-800/80 flex flex-col justify-center font-mono text-xs">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+        </div>
+
+        <!-- Exam Tricks & Pitfalls Table -->
+        <div class="rounded-2xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-5 sm:p-6 shadow-sm space-y-4">
+          <h3 class="font-bold text-base sm:text-lg text-slate-900 dark:text-white">
+            High-Yield GATE &amp; University Exam Traps to Avoid
+          </h3>
+          <div class="overflow-x-auto">
+            <table class="w-full text-left border-collapse text-xs sm:text-sm">
+              <thead>
+                <tr class="border-b border-slate-200 dark:border-slate-700 text-slate-500 dark:text-slate-400">
+                  <th class="py-2.5 pr-4 font-semibold">Topic</th>
+                  <th class="py-2.5 pr-4 font-semibold">Common Student Mistake</th>
+                  <th class="py-2.5 font-semibold">Correct Rule</th>
+                </tr>
+              </thead>
+              <tbody class="divide-y divide-slate-100 dark:divide-slate-800 text-slate-700 dark:text-slate-300">
+                <tr>
+                  <td class="py-3 pr-4 font-semibold">Product of Signals</td>
+                  <td class="py-3 pr-4">Assuming Nyquist rate of $x_1(t)x_2(t)$ is $\max(2f_1, 2f_2)$.</td>
+                  <td class="py-3">Convolution in frequency adds bandwidths: Nyquist rate is $2(f_1 + f_2)$!</td>
+                </tr>
+                <tr>
+                  <td class="py-3 pr-4 font-semibold">Time Scaling &amp; Period</td>
+                  <td class="py-3 pr-4">Forgetting time-axis scaling when finding fundamental period of $x(at)$.</td>
+                  <td class="py-3">If $x(t)$ has period $T_0$, then $x(at)$ has period $\frac{T_0}{|a|}$.</td>
+                </tr>
+                <tr>
+                  <td class="py-3 pr-4 font-semibold">Initial Value Theorem</td>
+                  <td class="py-3 pr-4">Applying $\lim_{s\to\infty} s X(s)$ without checking pole excess.</td>
+                  <td class="py-3">Requires $x(t)$ to have no impulse at $t = 0^+$ and $\deg(\text{den}) &gt; \deg(\text{num})$ for strictly proper cases.</td>
+                </tr>
+                <tr>
+                  <td class="py-3 pr-4 font-semibold">DT Periodicity</td>
+                  <td class="py-3 pr-4">Treating every discrete cosine $\cos(\Omega_0 n)$ as periodic.</td>
+                  <td class="py-3">Periodic iff $m = \frac{2\pi}{\Omega_0}$ is a positive rational number ($k/N$); then $N_0 = \text{lcm}$ of denominators.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===================================================================== -->
+      <!-- INTERACTIVE SELF-TEST / MCQ QUIZ                                      -->
+      <!-- ===================================================================== -->
+      <section id="quiz-section" class="scroll-mt-24 rounded-3xl bg-white dark:bg-slate-900 border border-slate-200 dark:border-slate-800 p-6 sm:p-8 shadow-sm space-y-6">
+        <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-200 dark:border-slate-800 pb-4">
+          <div>
+            <span class="text-xs font-mono font-bold uppercase tracking-wider text-indigo-600 dark:text-indigo-400">Practice Assessment</span>
+            <h2 class="text-xl sm:text-2xl font-bold text-slate-900 dark:text-white mt-0.5">
+              ECE Semester &amp; GATE Quick Check
+            </h2>
+          </div>
+          <div class="flex items-center gap-3">
+            <span id="quiz-score-badge" class="px-3 py-1.5 rounded-xl text-xs sm:text-sm font-mono font-semibold bg-indigo-50 dark:bg-indigo-950 text-indigo-700 dark:text-indigo-300">
+              Score: 0 / 5
+            </span>
+            <button id="quiz-reset-btn" type="button" class="px-3.5 py-2 rounded-xl text-xs sm:text-sm font-semibold bg-slate-100 dark:bg-slate-800 hover:bg-slate-200 dark:hover:bg-slate-700 border border-slate-200 dark:border-slate-700 transition">
+              Reset Quiz
+            </button>
+          </div>
+        </div>
+
+        <div id="quiz-container" class="space-y-5">
+          <!-- Questions rendered via JS -->
+        </div>
+      </section>
+
+      <!-- Footer -->
+      <footer class="pt-4 pb-8 text-center text-xs text-slate-500 dark:text-slate-400">
+        Signals &amp; Systems Interactive Study Lab for Indian ECE Undergraduates • Built for conceptual clarity &amp; exam practice.
+      </footer>
+    </main>
+  </div>
+
+  <!-- ======================================================================= -->
+  <!-- APPLICATION LOGIC & INTERACTIVE VISUALIZERS                           -->
+  <!-- ======================================================================= -->
+  <script>
+    (function () {
+      'use strict';
+
+      /* ------------------------------------------------------------------- */
+      /* 1. THEME TOGGLE & MOBILE NAVIGATION                                 */
+      /* ------------------------------------------------------------------- */
+      const htmlEl = document.documentElement;
+      const themeBtn = document.getElementById('theme-toggle-btn');
+
+      // Initialize theme from localStorage or system preference
+      const savedTheme = localStorage.getItem('ece_ss_theme');
+      if (savedTheme === 'dark' || (!savedTheme && window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+        htmlEl.classList.add('dark');
+      } else {
+        htmlEl.classList.remove('dark');
+      }
+
+      function isDark() {
+        return htmlEl.classList.contains('dark');
+      }
+
+      function redrawAllCanvases() {
+        drawTimeOpCanvas();
+        drawConvCanvas();
+        drawFourierCanvas();
+        drawPzCanvas();
+      }
+
+      themeBtn.addEventListener('click', () => {
+        htmlEl.classList.toggle('dark');
+        localStorage.setItem('ece_ss_theme', isDark() ? 'dark' : 'light');
+        redrawAllCanvases();
+      });
+
+      const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+      const sidebarNav = document.getElementById('sidebar-nav');
+      const backdrop = document.getElementById('mobile-drawer-backdrop');
+
+      function openMobileNav() {
+        sidebarNav.classList.remove('-translate-x-full');
+        backdrop.classList.remove('hidden');
+      }
+
+      function closeMobileNav() {
+        sidebarNav.classList.add('-translate-x-full');
+        backdrop.classList.add('hidden');
+      }
+
+      mobileMenuBtn.addEventListener('click', () => {
+        if (sidebarNav.classList.contains('-translate-x-full')) {
+          openMobileNav();
+        } else {
+          closeMobileNav();
+        }
+      });
+
+      backdrop.addEventListener('click', closeMobileNav);
+      document.querySelectorAll('#sidebar-nav a').forEach((link) => {
+        link.addEventListener('click', () => {
+          if (window.innerWidth < 1024) closeMobileNav();
+        });
+      });
+
+      /* ------------------------------------------------------------------- */
+      /* 2. MODULE 1A & 1B: SIGNAL & SYSTEM CLASSIFIERS                      */
+      /* ------------------------------------------------------------------- */
+      const sigClassifySelect = document.getElementById('sig-classify-select');
+      const sigClassifyOutput = document.getElementById('sig-classify-output');
+
+      const signalProfiles = {
+        exp_decay: {
+          type: 'Energy Signal (Causal Decaying Exponential)',
+          energy: 'E = ∫₀^∞ 9 e^{-4t} dt = 9/4 = 2.25 (Finite)',
+          power: 'P = 0 (Since Energy is finite over infinite duration)',
+          periodic: 'Aperiodic (decays to 0 as t → ∞)'
+        },
+        dc_const: {
+          type: 'Power Signal (Constant DC)',
+          energy: 'E = ∫_{-∞}^{∞} 16 dt = ∞',
+          power: 'P = (1/2T) ∫_{-T}^{T} 16 dt = 16 W (Finite)',
+          periodic: 'Periodic for any arbitrary period T₀ > 0 (fundamental period undefined)'
+        },
+        ct_sine: {
+          type: 'Power Signal (Continuous Sinusoid)',
+          energy: 'E = ∞',
+          power: 'P = A²/2 = 25/2 = 12.5 W',
+          periodic: 'Periodic with T₀ = 2π / (6π) = 1/3 s (≈ 0.333 s)'
+        },
+        dt_cos_rat: {
+          type: 'Discrete Power Signal (Periodic)',
+          energy: 'E = ∞',
+          power: 'P = A²/2 = 4/2 = 2',
+          periodic: 'm = 2π / (2π/5) = 5 (integer) → Fundamental period N₀ = 5 samples'
+        },
+        dt_cos_irrat: {
+          type: 'Discrete Power Signal (Aperiodic)',
+          energy: 'E = ∞',
+          power: 'P = A²/2 = 2',
+          periodic: 'm = 2π / 1 = 2π (irrational) → Aperiodic in discrete time!'
+        },
+        ramp_step: {
+          type: 'Neither Energy Nor Power Signal',
+          energy: 'E = ∫₀^∞ t² dt = ∞',
+          power: 'P = lim_{T→∞} (1/2T) [T³/3] = ∞',
+          periodic: 'Aperiodic'
+        }
+      };
+
+      function renderSignalClassification() {
+        const key = sigClassifySelect.value;
+        const p = signalProfiles[key];
+        sigClassifyOutput.innerHTML = `
+          <div class="font-bold text-indigo-700 dark:text-indigo-300">${p.type}</div>
+          <div><span class="font-semibold">Energy:</span> ${p.energy}</div>
+          <div><span class="font-semibold">Average Power:</span> ${p.power}</div>
+          <div><span class="font-semibold">Periodicity:</span> ${p.periodic}</div>
+        `;
+      }
+
+      sigClassifySelect.addEventListener('change', renderSignalClassification);
+      renderSignalClassification();
+
+      const sysTestSelect = document.getElementById('sys-test-select');
+      const sysTestOutput = document.getElementById('sys-test-output');
+
+      const systemProfiles = {
+        diff_eq: {
+          linear: 'Linear (superposition holds for zero initial state)',
+          ti: 'Time-Invariant (coefficients 3 and 2 are constant)',
+          causal: 'Causal (uses present x(t) and instantaneous derivative)',
+          memory: 'Dynamic (differentiation has memory)',
+          stable: 'BIBO Stable (for bounded smooth inputs)'
+        },
+        time_mult: {
+          linear: 'Linear (multiplying x(t) by t satisfies additivity & homogeneity)',
+          ti: 'Time-Varying (shifting x(t - t₀) gives t·x(t - t₀) ≠ (t - t₀)·x(t - t₀))',
+          causal: 'Causal (output at t depends only on x(t))',
+          memory: 'Static / Memoryless (no past or future inputs)',
+          stable: 'BIBO Unstable (as t → ∞, t·x(t) grows unbounded even for x(t) = 1)'
+        },
+        square_sys: {
+          linear: 'Non-Linear ((x₁ + x₂)² ≠ x₁² + x₂²)',
+          ti: 'Time-Invariant (squaring operation does not vary with time)',
+          causal: 'Causal',
+          memory: 'Static / Memoryless',
+          stable: 'BIBO Stable (|x(t)| ≤ M ⇒ |y(t)| ≤ M²)'
+        },
+        advance_sys: {
+          linear: 'Linear',
+          ti: 'Time-Invariant',
+          causal: 'Non-Causal (y[n] = x[n+2] requires future sample n+2)',
+          memory: 'Dynamic (2-step time advance)',
+          stable: 'BIBO Stable (|x[n]| ≤ M ⇒ |y[n]| ≤ M)'
+        },
+        time_rev: {
+          linear: 'Linear',
+          ti: 'Time-Varying (time reversal is not shift-commutative)',
+          causal: 'Non-Causal (for n < 0, y[n] = x[-n] looks at future time -n > 0)',
+          memory: 'Dynamic',
+          stable: 'BIBO Stable'
+        },
+        integrator: {
+          linear: 'Linear',
+          ti: 'Time-Invariant',
+          causal: 'Causal',
+          memory: 'Dynamic (accumulates history)',
+          stable: 'BIBO Unstable (constant input x(t) = 1 for t ≥ 0 yields ramp y(t) = t → ∞)'
+        }
+      };
+
+      function renderSystemTest() {
+        const key = sysTestSelect.value;
+        const s = systemProfiles[key];
+        sysTestOutput.innerHTML = `
+          <div><span class="font-semibold">Linearity:</span> ${s.linear}</div>
+          <div><span class="font-semibold">Time-Invariance:</span> ${s.ti}</div>
+          <div><span class="font-semibold">Causality:</span> ${s.causal}</div>
+          <div><span class="font-semibold">Memory:</span> ${s.memory}</div>
+          <div><span class="font-semibold">Stability:</span> ${s.stable}</div>
+        `;
+      }
+
+      sysTestSelect.addEventListener('change', renderSystemTest);
+      renderSystemTest();
+
+      /* ------------------------------------------------------------------- */
+      /* 3. CANVAS HELPER FOR HIGH-DPI RESPONSIVE RENDERING                  */
+      /* ------------------------------------------------------------------- */
+      function prepareCanvas(canvas) {
+        const dpr = window.devicePixelRatio || 1;
+        const rect = canvas.getBoundingClientRect();
+        const width = Math.max(260, Math.floor(rect.width));
+        const height = Math.max(180, Math.floor(rect.height));
+        if (canvas.width !== Math.floor(width * dpr) || canvas.height !== Math.floor(height * dpr)) {
+          canvas.width = Math.floor(width * dpr);
+          canvas.height = Math.floor(height * dpr);
+        }
+        const ctx = canvas.getContext('2d');
+        ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+        return { ctx, width, height };
+      }
+
+      /* ------------------------------------------------------------------- */
+      /* 4. MODULE 2: TIME TRANSFORMATION CANVAS VISUALIZER                  */
+      /* ------------------------------------------------------------------- */
+      const baseWaveSelect = document.getElementById('base-wave-select');
+      const shiftSlider = document.getElementById('shift-slider');
+      const scaleSlider = document.getElementById('scale-slider');
+      const shiftVal = document.getElementById('shift-val');
+      const scaleVal = document.getElementById('scale-val');
+      const timeOpFormula = document.getElementById('time-op-formula');
+      const resetTimeOpBtn = document.getElementById('reset-time-op-btn');
+      const timeOpCanvas = document.getElementById('time-op-canvas');
+
+      function evalBaseWave(type, t) {
+        switch (type) {
+          case 'rect_pulse':
+            return Math.abs(t) <= 2 ? 1.5 : 0;
+          case 'ramp_causal':
+            return t >= 0 ? Math.min(t * 0.6, 3.0) : 0;
+          case 'step_causal':
+            return t >= 0 ? 1.5 : 0;
+          case 'exp_causal':
+            return t >= 0 ? 2.2 * Math.exp(-0.6 * t) : 0;
+          case 'tri_pulse':
+            return Math.abs(t) <= 2 ? 2.0 * (1 - Math.abs(t) / 2) : 0;
+          default:
+            return 0;
+        }
+      }
+
+      function drawTimeOpCanvas() {
+        if (!timeOpCanvas) return;
+        const t0 = parseFloat(shiftSlider.value);
+        let a = parseFloat(scaleSlider.value);
+        if (Math.abs(a) < 0.05) a = 0.5; // avoid zero scaling collapse
+
+        shiftVal.textContent = (t0 >= 0 ? '+' : '') + t0.toFixed(1);
+        scaleVal.textContent = a.toFixed(1);
+
+        const shiftStr = t0 === 0 ? '' : (t0 > 0 ? ` - ${t0.toFixed(1)}` : ` + ${Math.abs(t0).toFixed(1)}`);
+        timeOpFormula.textContent = `y(t) = x(${a.toFixed(1)}(t${shiftStr}))`;
+
+        const { ctx, width, height } = prepareCanvas(timeOpCanvas);
+        const dark = isDark();
+        ctx.clearRect(0, 0, width, height);
+
+        const tMin = -8;
+        const tMax = 8;
+        const yMin = -1.2;
+        const yMax = 3.2;
+
+        const toX = (t) => ((t - tMin) / (tMax - tMin)) * width;
+        const toY = (y) => height - ((y - yMin) / (yMax - yMin)) * height;
+
+        // Grid lines
+        ctx.strokeStyle = dark ? '#1e293b' : '#e2e8f0';
+        ctx.lineWidth = 1;
+        for (let t = Math.ceil(tMin); t <= Math.floor(tMax); t++) {
+          const px = toX(t);
+          ctx.beginPath();
+          ctx.moveTo(px, 0);
+          ctx.lineTo(px, height);
+          ctx.stroke();
+        }
+        for (let y = -1; y <= 3; y++) {
+          const py = toY(y);
+          ctx.beginPath();
+          ctx.moveTo(0, py);
+          ctx.lineTo(width, py);
+          ctx.stroke();
+        }
+
+        // Axes
+        ctx.strokeStyle = dark ? '#64748b' : '#94a3b8';
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.moveTo(0, toY(0));
+        ctx.lineTo(width, toY(0));
+        ctx.moveTo(toX(0), 0);
+        ctx.lineTo(toX(0), height);
+        ctx.stroke();
+
+        // Axis labels
+        ctx.fillStyle = dark ? '#94a3b8' : '#64748b';
+        ctx.font = '11px "JetBrains Mono", monospace';
+        ctx.fillText('t', width - 16, toY(0) - 8);
+        ctx.fillText('0', toX(0) + 5, toY(0) + 14);
+
+        const waveType = baseWaveSelect.value;
+        const samples = 400;
+
+        // Original x(t)
+        ctx.strokeStyle = dark ? '#64748b' : '#94a3b8';
+        ctx.lineWidth = 1.75;
+        ctx.setLineDash([5, 4]);
+        ctx.beginPath();
+        for (let i = 0; i <= samples; i++) {
+          const t = tMin + (i / samples) * (tMax - tMin);
+          const val = evalBaseWave(waveType, t);
+          const px = toX(t);
+          const py = toY(val);
+          if (i === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Transformed y(t) = x(a*(t - t0))
+        ctx.strokeStyle = dark ? '#818cf8' : '#4f46e5';
+        ctx.lineWidth = 2.6;
+        ctx.beginPath();
+        for (let i = 0; i <= samples; i++) {
+          const t = tMin + (i / samples) * (tMax - tMin);
+          const mappedArg = a * (t - t0);
+          const val = evalBaseWave(waveType, mappedArg);
+          const px = toX(t);
+          const py = toY(val);
+          if (i === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+      }
+
+      [baseWaveSelect, shiftSlider, scaleSlider].forEach((el) => {
+        el.addEventListener('input', drawTimeOpCanvas);
+        el.addEventListener('change', drawTimeOpCanvas);
+      });
+
+      resetTimeOpBtn.addEventListener('click', () => {
+        shiftSlider.value = '0';
+        scaleSlider.value = '1';
+        drawTimeOpCanvas();
+      });
+
+      /* ------------------------------------------------------------------- */
+      /* 5. MODULE 3: DISCRETE CONVOLUTION VISUALIZER                        */
+      /* ------------------------------------------------------------------- */
+      const convPresetSelect = document.getElementById('conv-preset-select');
+      const convPrevBtn = document.getElementById('conv-prev-btn');
+      const convNextBtn = document.getElementById('conv-next-btn');
+      const convPlayBtn = document.getElementById('conv-play-btn');
+      const convNBadge = document.getElementById('conv-n-badge');
+      const convSumDetail = document.getElementById('conv-sum-detail');
+      const convCanvas = document.getElementById('conv-canvas');
+
+      const convPresets = {
+        box_box: {
+          xStart: 0,
+          x: [1, 2, 1],
+          hStart: 0,
+          h: [1, 1, 1]
+        },
+        step_exp: {
+          xStart: 0,
+          x: [1, 1, 1, 1, 1, 1],
+          hStart: 0,
+          h: [1, 0.5, 0.25, 0.125, 0.0625, 0.03125]
+        },
+        signed_pair: {
+          xStart: 0,
+          x: [2, -1, 3],
+          hStart: 0,
+          h: [1, -2]
+        }
+      };
+
+      let currentN = 0;
+      let convTimer = null;
+
+      function getConvData() {
+        const preset = convPresets[convPresetSelect.value];
+        const xMap = {};
+        preset.x.forEach((val, idx) => {
+          xMap[preset.xStart + idx] = val;
+        });
+        const hMap = {};
+        preset.h.forEach((val, idx) => {
+          hMap[preset.hStart + idx] = val;
+        });
+
+        const minN = preset.xStart + preset.hStart - 1;
+        const maxN = preset.xStart + preset.x.length - 1 + (preset.hStart + preset.h.length - 1) + 1;
+
+        const yMap = {};
+        for (let nIdx = minN; nIdx <= maxN; nIdx++) {
+          let sum = 0;
+          for (let k = -6; k <= 12; k++) {
+            const xv = xMap[k] || 0;
+            const hv = hMap[nIdx - k] || 0;
+            sum += xv * hv;
+          }
+          yMap[nIdx] = Number(sum.toFixed(4));
+        }
+
+        return { xMap, hMap, yMap, minN, maxN };
+      }
+
+      function stopConvPlay() {
+        if (convTimer) {
+          clearInterval(convTimer);
+          convTimer = null;
+          convPlayBtn.textContent = 'Auto Play';
+        }
+      }
+
+      function drawConvCanvas() {
+        if (!convCanvas) return;
+        const { xMap, hMap, yMap, minN, maxN } = getConvData();
+        if (currentN < minN) currentN = minN;
+        if (currentN > maxN) currentN = maxN;
+
+        const terms = [];
+        let total = 0;
+        for (let k = -4; k <= 10; k++) {
+          const xv = xMap[k] || 0;
+          const hv = hMap[currentN - k] || 0;
+          const prod = xv * hv;
+          if (Math.abs(prod) > 1e-6) {
+            terms.push(`${Number(xv.toFixed(2))}·${Number(hv.toFixed(2))}`);
+            total += prod;
+          }
+        }
+        total = Number(total.toFixed(3));
+        convNBadge.textContent = `n = ${currentN} | y[${currentN}] = ${total}`;
+        convSumDetail.textContent = terms.length > 0 ? `y[${currentN}] = ${terms.join(' + ')} = ${total}` : `y[${currentN}] = 0 (no overlap)`;
+
+        const { ctx, width, height } = prepareCanvas(convCanvas);
+        const dark = isDark();
+        ctx.clearRect(0, 0, width, height);
+
+        const nMin = -2;
+        const nMax = 10;
+        const rowH = height / 3;
+
+        function drawStemRow(rowIdx, title, valFn, highlightFn, colorHex) {
+          const topY = rowIdx * rowH;
+          const baseLineY = topY + rowH * 0.68;
+          const ampScale = rowH * 0.24;
+
+          ctx.strokeStyle = dark ? '#1e293b' : '#e2e8f0';
+          ctx.lineWidth = 1;
+          ctx.beginPath();
+          ctx.moveTo(0, topY);
+          ctx.lineTo(width, topY);
+          ctx.stroke();
+
+          ctx.fillStyle = dark ? '#cbd5e1' : '#334155';
+          ctx.font = '600 11px "JetBrains Mono", monospace';
+          ctx.fillText(title, 10, topY + 16);
+
+          // Zero axis
+          ctx.strokeStyle = dark ? '#475569' : '#cbd5e1';
+          ctx.beginPath();
+          ctx.moveTo(0, baseLineY);
+          ctx.lineTo(width, baseLineY);
+          ctx.stroke();
+
+          const span = nMax - nMin + 1;
+          for (let k = nMin; k <= nMax; k++) {
+            const cx = ((k - nMin + 0.5) / span) * width;
+            const v = valFn(k);
+            const active = highlightFn ? highlightFn(k, v) : false;
+            const strokeC = active ? '#f59e0b' : colorHex;
+
+            ctx.fillStyle = dark ? '#94a3b8' : '#64748b';
+            ctx.font = '10px "JetBrains Mono", monospace';
+            ctx.fillText(String(k), cx - 3, baseLineY + 13);
+
+            if (Math.abs(v) > 1e-6) {
+              const py = baseLineY - v * ampScale;
+              ctx.strokeStyle = strokeC;
+              ctx.lineWidth = active ? 2.6 : 2;
+              ctx.beginPath();
+              ctx.moveTo(cx, baseLineY);
+              ctx.lineTo(cx, py);
+              ctx.stroke();
+
+              ctx.fillStyle = strokeC;
+              ctx.beginPath();
+              ctx.arc(cx, py, active ? 4.8 : 3.8, 0, Math.PI * 2);
+              ctx.fill();
+            }
+          }
+        }
+
+        const primaryC = dark ? '#818cf8' : '#4f46e5';
+        const secondaryC = dark ? '#34d399' : '#059669';
+
+        drawStemRow(
+          0,
+          'x[k] (Input)',
+          (k) => xMap[k] || 0,
+          (k, v) => Math.abs(v) > 1e-6 && Math.abs(hMap[currentN - k] || 0) > 1e-6,
+          primaryC
+        );
+
+        drawStemRow(
+          1,
+          `h[${currentN} - k] (Flipped & Shifted by n = ${currentN})`,
+          (k) => hMap[currentN - k] || 0,
+          (k, v) => Math.abs(v) > 1e-6 && Math.abs(xMap[k] || 0) > 1e-6,
+          secondaryC
+        );
+
+        drawStemRow(
+          2,
+          'y[n] = (x * h)[n] (Output)',
+          (k) => (k <= currentN ? (yMap[k] || 0) : 0),
+          (k) => k === currentN,
+          primaryC
+        );
+      }
+
+      convPresetSelect.addEventListener('change', () => {
+        stopConvPlay();
+        currentN = 0;
+        drawConvCanvas();
+      });
+
+      convPrevBtn.addEventListener('click', () => {
+        stopConvPlay();
+        const { minN } = getConvData();
+        currentN = Math.max(minN, currentN - 1);
+        drawConvCanvas();
+      });
+
+      convNextBtn.addEventListener('click', () => {
+        stopConvPlay();
+        const { maxN } = getConvData();
+        currentN = Math.min(maxN, currentN + 1);
+        drawConvCanvas();
+      });
+
+      convPlayBtn.addEventListener('click', () => {
+        if (convTimer) {
+          stopConvPlay();
+          return;
+        }
+        convPlayBtn.textContent = 'Pause';
+        const { minN, maxN } = getConvData();
+        if (currentN >= maxN) currentN = minN;
+        convTimer = setInterval(() => {
+          currentN++;
+          if (currentN > maxN) {
+            stopConvPlay();
+            return;
+          }
+          drawConvCanvas();
+        }, 700);
+      });
+
+      /* ------------------------------------------------------------------- */
+      /* 6. MODULE 4: FOURIER SERIES SYNTHESIS & SPECTRUM CANVAS            */
+      /* ------------------------------------------------------------------- */
+      const fourierWaveSelect = document.getElementById('fourier-wave-select');
+      const harmonicsSlider = document.getElementById('harmonics-slider');
+      const harmonicsVal = document.getElementById('harmonics-val');
+      const fourierCanvas = document.getElementById('fourier-canvas');
+
+      function getFourierHarmonics(type, numHarmonics) {
+        // Returns array of { k, mag } for fundamental ω0 = 1 rad/s (T0 = 2π)
+        const list = [];
+        if (type === 'square') {
+          let count = 0;
+          let k = 1;
+          while (count < numHarmonics) {
+            list.push({ k, mag: 4 / (Math.PI * k), sign: 1, mode: 'sin' });
+            k += 2;
+            count++;
+          }
+        } else if (type === 'triangle') {
+          let count = 0;
+          let k = 1;
+          while (count < numHarmonics) {
+            const idx = (k - 1) / 2;
+            const sgn = idx % 2 === 0 ? 1 : -1;
+            list.push({ k, mag: (8 / (Math.PI * Math.PI * k * k)) * sgn, sign: sgn, mode: 'sin' });
+            k += 2;
+            count++;
+          }
+        } else {
+          // Sawtooth
+          for (let k = 1; k <= numHarmonics; k++) {
+            const sgn = (k + 1) % 2 === 0 ? 1 : -1;
+            list.push({ k, mag: (2 / (Math.PI * k)) * sgn, sign: sgn, mode: 'sin' });
+          }
+        }
+        return list;
+      }
+
+      function evalFourierApprox(harmonics, t) {
+        let sum = 0;
+        for (const h of harmonics) {
+          sum += h.mag * Math.sin(h.k * t);
+        }
+        return sum;
+      }
+
+      function evalIdealWave(type, t) {
+        // Normalize t into [-π, π)
+        let modT = ((t + Math.PI) % (2 * Math.PI));
+        if (modT < 0) modT += 2 * Math.PI;
+        modT -= Math.PI;
+
+        if (type === 'square') {
+          return modT >= 0 ? 1 : -1;
+        } else if (type === 'triangle') {
+          if (modT < -Math.PI / 2) return -1 - (modT + Math.PI) / (Math.PI / 2);
+          if (modT <= Math.PI / 2) return modT / (Math.PI / 2);
+          return 1 - (modT - Math.PI / 2) / (Math.PI / 2);
+        } else {
+          return modT / Math.PI;
+        }
+      }
+
+      function drawFourierCanvas() {
+        if (!fourierCanvas) return;
+        const N = parseInt(harmonicsSlider.value, 10);
+        harmonicsVal.textContent = String(N);
+        const type = fourierWaveSelect.value;
+        const harmonics = getFourierHarmonics(type, N);
+
+        const { ctx, width, height } = prepareCanvas(fourierCanvas);
+        const dark = isDark();
+        ctx.clearRect(0, 0, width, height);
+
+        const splitY = Math.floor(height * 0.58);
+
+        // Top half: Time domain synthesis over [-2π, 2π]
+        const tMin = -2 * Math.PI;
+        const tMax = 2 * Math.PI;
+        const yMid = splitY * 0.52;
+        const yScale = splitY * 0.34;
+
+        ctx.fillStyle = dark ? '#cbd5e1' : '#334155';
+        ctx.font = '600 11px "JetBrains Mono", monospace';
+        ctx.fillText(`Time Domain: N = ${N} harmonic term(s) vs. Ideal Waveform`, 10, 16);
+
+        ctx.strokeStyle = dark ? '#334155' : '#cbd5e1';
+        ctx.lineWidth = 1;
+        ctx.beginPath();
+        ctx.moveTo(0, yMid);
+        ctx.lineTo(width, yMid);
+        ctx.stroke();
+
+        // Ideal dashed
+        ctx.strokeStyle = dark ? '#64748b' : '#94a3b8';
+        ctx.setLineDash([4, 4]);
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        const steps = 360;
+        for (let i = 0; i <= steps; i++) {
+          const t = tMin + (i / steps) * (tMax - tMin);
+          const px = (i / steps) * width;
+          const py = yMid - evalIdealWave(type, t) * yScale;
+          if (i === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        // Synthesized solid
+        ctx.strokeStyle = dark ? '#818cf8' : '#4f46e5';
+        ctx.lineWidth = 2.3;
+        ctx.beginPath();
+        for (let i = 0; i <= steps; i++) {
+          const t = tMin + (i / steps) * (tMax - tMin);
+          const px = (i / steps) * width;
+          const py = yMid - evalFourierApprox(harmonics, t) * yScale;
+          if (i === 0) ctx.moveTo(px, py);
+          else ctx.lineTo(px, py);
+        }
+        ctx.stroke();
+
+        // Bottom half: Harmonic Magnitude Spectrum |c_k| for k = 1..25
+        ctx.strokeStyle = dark ? '#1e293b' : '#e2e8f0';
+        ctx.beginPath();
+        ctx.moveTo(0, splitY);
+        ctx.lineTo(width, splitY);
+        ctx.stroke();
+
+        const specBase = height - 20;
+        const specScale = (height - splitY - 38) / 1.4;
+        ctx.fillStyle = dark ? '#cbd5e1' : '#334155';
+        ctx.fillText('Harmonic Amplitude Spectrum |a_k| (k = 1 .. 25)', 10, splitY + 15);
+
+        const maxK = 25;
+        const activeMap = {};
+        harmonics.forEach((h) => {
+          activeMap[h.k] = Math.abs(h.mag);
+        });
+
+        for (let k = 1; k <= maxK; k++) {
+          const cx = ((k - 0.5) / maxK) * width;
+          const mag = activeMap[k] || 0;
+          const isIncluded = k <= harmonics[harmonics.length - 1].k && mag > 0;
+          if (mag > 0) {
+            const top = specBase - mag * specScale;
+            ctx.strokeStyle = isIncluded ? (dark ? '#34d399' : '#059669') : (dark ? '#475569' : '#cbd5e1');
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.moveTo(cx, specBase);
+            ctx.lineTo(cx, top);
+            ctx.stroke();
+          }
+          if (k % 2 === 1 || k === 2) {
+            ctx.fillStyle = dark ? '#94a3b8' : '#64748b';
+            ctx.font = '10px "JetBrains Mono", monospace';
+            ctx.fillText(String(k), cx - 3, height - 5);
+          }
+        }
+      }
+
+      [fourierWaveSelect, harmonicsSlider].forEach((el) => {
+        el.addEventListener('input', drawFourierCanvas);
+        el.addEventListener('change', drawFourierCanvas);
+      });
+
+      /* ------------------------------------------------------------------- */
+      /* 7. MODULE 5: Z-PLANE POLE-ZERO PLOTTER & STABILITY CHECKER            */
+      /* ------------------------------------------------------------------- */
+      const pzCanvas = document.getElementById('pz-canvas');
+      const modePoleBtn = document.getElementById('mode-pole-btn');
+      const modeZeroBtn = document.getElementById('mode-zero-btn');
+      const pzPresetBtn = document.getElementById('pz-preset-btn');
+      const pzClearBtn = document.getElementById('pz-clear-btn');
+      const pzStabilityBadge = document.getElementById('pz-stability-badge');
+      const pzReadout = document.getElementById('pz-readout');
+
+      let pzMode = 'pole'; // 'pole' or 'zero'
+      let poles = [{ re: 0.6, im: 0.4 }, { re: 0.6, im: -0.4 }];
+      let zeros = [{ re: -0.5, im: 0 }];
+
+      function setPzMode(newMode) {
+        pzMode = newMode;
+        if (pzMode === 'pole') {
+          modePoleBtn.className = 'px-3.5 py-2 rounded-xl bg-indigo-600 text-white font-semibold shadow-sm transition';
+          modeZeroBtn.className = 'px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-semibold border border-slate-200 dark:border-slate-700 transition';
+        } else {
+          modeZeroBtn.className = 'px-3.5 py-2 rounded-xl bg-indigo-600 text-white font-semibold shadow-sm transition';
+          modePoleBtn.className = 'px-3.5 py-2 rounded-xl bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-200 font-semibold border border-slate-200 dark:border-slate-700 transition';
+        }
+      }
+
+      modePoleBtn.addEventListener('click', () => setPzMode('pole'));
+      modeZeroBtn.addEventListener('click', () => setPzMode('zero'));
+
+      pzPresetBtn.addEventListener('click', () => {
+        poles = [
+          { re: 0.55, im: 0.5 },
+          { re: 0.55, im: -0.5 }
+        ];
+        zeros = [{ re: 1.0, im: 0 }];
+        drawPzCanvas();
+      });
+
+      pzClearBtn.addEventListener('click', () => {
+        poles = [];
+        zeros = [];
+        drawPzCanvas();
+      });
+
+      function updatePzAnalysis() {
+        const maxPoleRadius = poles.reduce((acc, p) => Math.max(acc, Math.hypot(p.re, p.im)), 0);
+        const isCausalStable = maxPoleRadius < 1.0;
+
+        if (poles.length === 0) {
+          pzStabilityBadge.className = 'text-xs sm:text-sm font-semibold px-3 py-1.5 rounded-xl bg-sky-50 dark:bg-sky-950 text-sky-700 dark:text-sky-300 border border-sky-200 dark:border-sky-800';
+          pzStabilityBadge.textContent = 'FIR / All-Zero System (Always Stable)';
+        } else if (isCausalStable) {
+          pzStabilityBadge.className = 'text-xs sm:text-sm font-semibold px-3 py-1.5 rounded-xl bg-emerald-50 dark:bg-emerald-950 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800';
+          pzStabilityBadge.textContent = `Causal System: BIBO Stable (max |p| = ${maxPoleRadius.toFixed(2)} < 1)`;
+        } else {
+          pzStabilityBadge.className = 'text-xs sm:text-sm font-semibold px-3 py-1.5 rounded-xl bg-rose-50 dark:bg-rose-950 text-rose-700 dark:text-rose-300 border border-rose-200 dark:border-rose-800';
+          pzStabilityBadge.textContent = `Causal System: Unstable (max |p| = ${maxPoleRadius.toFixed(2)} ≥ 1)`;
+        }
+
+        const poleListHtml = poles.length
+          ? poles.map((p, i) => `<li>p${i + 1} = ${p.re.toFixed(2)} ${p.im >= 0 ? '+' : '-'} j${Math.abs(p.im).toFixed(2)} (|p| = ${Math.hypot(p.re, p.im).toFixed(2)})</li>`).join('')
+          : '<li class="text-slate-400">None</li>';
+
+        const zeroListHtml = zeros.length
+          ? zeros.map((z, i) => `<li>z${i + 1} = ${z.re.toFixed(2)} ${z.im >= 0 ? '+' : '-'} j${Math.abs(z.im).toFixed(2)}</li>`).join('')
+          : '<li class="text-slate-400">None</li>';
+
+        const rocText = poles.length
+          ? `For causal signal: ROC is |z| > ${maxPoleRadius.toFixed(2)}.`
+          : 'ROC is entire z-plane (except possibly z = 0 or ∞).';
+
+        pzReadout.innerHTML = `
+          <div class="font-bold text-slate-900 dark:text-white">z-Plane Summary</div>
+          <div class="text-slate-600 dark:text-slate-300">${rocText}</div>
+          <div>
+            <div class="font-semibold text-rose-600 dark:text-rose-400">Poles (${poles.length}):</div>
+            <ul class="font-mono text-[11px] pl-3 list-disc space-y-0.5">${poleListHtml}</ul>
+          </div>
+          <div>
+            <div class="font-semibold text-indigo-600 dark:text-indigo-400">Zeros (${zeros.length}):</div>
+            <ul class="font-mono text-[11px] pl-3 list-disc space-y-0.5">${zeroListHtml}</ul>
+          </div>
+        `;
+      }
+
+      function getPzGeometry(width, height) {
+        const cx = width / 2;
+        const cy = height / 2;
+        const radiusPx = Math.min(width, height) * 0.34; // |z| = 1 radius
+        return { cx, cy, radiusPx };
+      }
+
+      function drawPzCanvas() {
+        if (!pzCanvas) return;
+        updatePzAnalysis();
+        const { ctx, width, height } = prepareCanvas(pzCanvas);
+        const dark = isDark();
+        ctx.clearRect(0, 0, width, height);
+
+        const { cx, cy, radiusPx } = getPzGeometry(width, height);
+
+        // Real & Imag axes
+        ctx.strokeStyle = dark ? '#475569' : '#94a3b8';
+        ctx.lineWidth = 1.25;
+        ctx.beginPath();
+        ctx.moveTo(12, cy);
+        ctx.lineTo(width - 12, cy);
+        ctx.moveTo(cx, 12);
+        ctx.lineTo(cx, height - 12);
+        ctx.stroke();
+
+        // Unit circle |z| = 1
+        ctx.strokeStyle = dark ? '#38bdf8' : '#0284c7';
+        ctx.setLineDash([5, 4]);
+        ctx.lineWidth = 1.5;
+        ctx.beginPath();
+        ctx.arc(cx, cy, radiusPx, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        ctx.fillStyle = dark ? '#94a3b8' : '#64748b';
+        ctx.font = '11px "JetBrains Mono", monospace';
+        ctx.fillText('Re(z)', width - 42, cy - 8);
+        ctx.fillText('Im(z)', cx + 8, 22);
+        ctx.fillText('|z|=1', cx + radiusPx + 4, cy - 6);
+
+        // Draw Zeros (circles)
+        ctx.strokeStyle = dark ? '#818cf8' : '#4f46e5';
+        ctx.lineWidth = 2.2;
+        zeros.forEach((z) => {
+          const px = cx + z.re * radiusPx;
+          const py = cy - z.im * radiusPx;
+          ctx.beginPath();
+          ctx.arc(px, py, 6, 0, Math.PI * 2);
+          ctx.stroke();
+        });
+
+        // Draw Poles (crosses)
+        ctx.strokeStyle = dark ? '#fb7185' : '#e11d48';
+        ctx.lineWidth = 2.4;
+        poles.forEach((p) => {
+          const px = cx + p.re * radiusPx;
+          const py = cy - p.im * radiusPx;
+          const d = 6;
+          ctx.beginPath();
+          ctx.moveTo(px - d, py - d);
+          ctx.lineTo(px + d, py + d);
+          ctx.moveTo(px + d, py - d);
+          ctx.lineTo(px - d, py + d);
+          ctx.stroke();
+        });
+      }
+
+      pzCanvas.addEventListener('click', (evt) => {
+        const rect = pzCanvas.getBoundingClientRect();
+        const clickX = evt.clientX - rect.left;
+        const clickY = evt.clientY - rect.top;
+        const { cx, cy, radiusPx } = getPzGeometry(rect.width, rect.height);
+
+        const re = Number(((clickX - cx) / radiusPx).toFixed(2));
+        const im = Number((-(clickY - cy) / radiusPx).toFixed(2));
+
+        if (Math.abs(re) > 1.6 || Math.abs(im) > 1.6) return;
+
+        if (pzMode === 'pole') {
+          poles.push({ re, im });
+        } else {
+          zeros.push({ re, im });
+        }
+        drawPzCanvas();
+      });
+
+      /* ------------------------------------------------------------------- */
+      /* 8. MODULE 6: NYQUIST & ALIASING CALCULATOR                          */
+      /* ------------------------------------------------------------------- */
+      const fmInput = document.getElementById('fm-input');
+      const fsInput = document.getElementById('fs-input');
+      const nyquistResult = document.getElementById('nyquist-result');
+
+      function computeNyquist() {
+        const fm = Math.max(0.001, parseFloat(fmInput.value) || 0);
+        const fs = Math.max(0.001, parseFloat(fsInput.value) || 0);
+        const nyquistRate = 2 * fm;
+        const tsMs = (1 / nyquistRate) * 1000;
+
+        if (fs >= nyquistRate) {
+          nyquistResult.innerHTML = `
+            <div class="font-bold text-emerald-700 dark:text-emerald-300">No Aliasing (f_s ≥ 2f_m)</div>
+            <div>Nyquist Rate: ${nyquistRate.toFixed(2)} Hz</div>
+            <div>Nyquist Interval: ${tsMs.toFixed(3)} ms</div>
+          `;
+        } else {
+          // Folded frequency in [0, fs/2]
+          let folded = Math.abs(fm - fs * Math.round(fm / fs));
+          if (folded > fs / 2) folded = Math.abs(fs - folded);
+          nyquistResult.innerHTML = `
+            <div class="font-bold text-rose-700 dark:text-rose-300">Aliasing Occurs! (f_s &lt; 2f_m)</div>
+            <div>Nyquist Rate: ${nyquistRate.toFixed(2)} Hz</div>
+            <div>Aliased Freq: ${folded.toFixed(2)} Hz</div>
+          `;
+        }
+      }
+
+      fmInput.addEventListener('input', computeNyquist);
+      fsInput.addEventListener('input', computeNyquist);
+      computeNyquist();
+
+      /* ------------------------------------------------------------------- */
+      /* 9. INTERACTIVE ECE / GATE SELF-TEST QUIZ                            */
+      /* ------------------------------------------------------------------- */
+      const quizQuestions = [
+        {
+          q: '1. For a continuous-time LTI system to be causal and BIBO stable, where must all its poles lie in the s-plane?',
+          options: [
+            'Strictly in the Left Half Plane (Re(s) < 0)',
+            'Strictly in the Right Half Plane (Re(s) > 0)',
+            'On the imaginary axis (Re(s) = 0)',
+            'Anywhere in the s-plane except the origin'
+          ],
+          correct: 0,
+          explain: 'Each LHP pole at s = -a (a > 0) corresponds to a decaying mode e^{-at}u(t), whose impulse response is absolutely integrable over [0, ∞).'
+        },
+        {
+          q: '2. What is the fundamental period N₀ of the discrete-time signal x[n] = cos(6π n / 7)?',
+          options: [
+            '7 samples',
+            '14 samples',
+            '6 samples',
+            'Aperiodic'
+          ],
+          correct: 0,
+          explain: 'm = 2π / (6π/7) = 7/3. Since 7 and 3 are coprime integers, N₀ = numerator = 7 samples.'
+        },
+        {
+          q: '3. If x₁(t) has bandwidth 4 kHz and x₂(t) has bandwidth 6 kHz, what is the Nyquist rate of y(t) = x₁(t) · x₂(t)?',
+          options: [
+            '12 kHz',
+            '20 kHz',
+            '8 kHz',
+            '10 kHz'
+          ],
+          correct: 1,
+          explain: 'Multiplication in time is convolution in frequency, so maximum frequency of y(t) is 4 + 6 = 10 kHz. Nyquist rate = 2 × 10 kHz = 20 kHz.'
+        },
+        {
+          q: '4. What is the length of linear convolution of a 4-sample sequence x[n] and a 3-sample sequence h[n]?',
+          options: [
+            '12 samples',
+            '7 samples',
+            '6 samples',
+            '4 samples'
+          ],
+          correct: 2,
+          explain: 'For finite sequences of lengths N₁ and N₂, linear convolution length is N₁ + N₂ - 1 = 4 + 3 - 1 = 6 samples.'
+        },
+        {
+          q: '5. A causal discrete-time LTI system has a pole at z = 0.8. What is its Region of Convergence (ROC)?',
+          options: [
+            '|z| < 0.8',
+            '|z| > 0.8',
+            '0.5 < |z| < 0.8',
+            'Entire z-plane'
+          ],
+          correct: 1,
+          explain: 'For a causal (right-sided) sequence, the ROC is outside the outermost pole: |z| > 0.8, which also includes the unit circle |z| = 1.'
+        }
+      ];
+
+      const quizContainer = document.getElementById('quiz-container');
+      const quizScoreBadge = document.getElementById('quiz-score-badge');
+      const quizResetBtn = document.getElementById('quiz-reset-btn');
+      const answeredMap = {};
+
+      function updateQuizScore() {
+        let score = 0;
+        quizQuestions.forEach((item, idx) => {
+          if (answeredMap[idx] === item.correct) score++;
+        });
+        quizScoreBadge.textContent = `Score: ${score} / ${quizQuestions.length}`;
+      }
+
+      function renderQuiz() {
+        quizContainer.innerHTML = '';
+        quizQuestions.forEach((item, qIdx) => {
+          const card = document.createElement('div');
+          card.className = 'p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700/80 space-y-3';
+
+          const qTitle = document.createElement('p');
+          qTitle.className = 'font-semibold text-sm sm:text-base text-slate-900 dark:text-white';
+          qTitle.textContent = item.q;
+          card.appendChild(qTitle);
+
+          const optsWrap = document.createElement('div');
+          optsWrap.className = 'grid grid-cols-1 sm:grid-cols-2 gap-2.5';
+
+          const userChoice = answeredMap[qIdx];
+          const hasAnswered = userChoice !== undefined;
+
+          item.options.forEach((optText, oIdx) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            let styleClass = 'text-left px-3.5 py-2.5 rounded-xl text-xs sm:text-sm font-medium border transition ';
+
+            if (!hasAnswered) {
+              styleClass += 'bg-white dark:bg-slate-900 border-slate-200 dark:border-slate-700 hover:border-indigo-500 hover:bg-indigo-50/40 dark:hover:bg-indigo-950/30';
+            } else if (oIdx === item.correct) {
+              styleClass += 'bg-emerald-50 dark:bg-emerald-950/70 border-emerald-500 text-emerald-800 dark:text-emerald-200 font-semibold';
+            } else if (oIdx === userChoice) {
+              styleClass += 'bg-rose-50 dark:bg-rose-950/70 border-rose-500 text-rose-800 dark:text-rose-200';
+            } else {
+              styleClass += 'bg-white/60 dark:bg-slate-900/50 border-slate-200 dark:border-slate-800 opacity-65';
+            }
+
+            btn.className = styleClass;
+            btn.textContent = optText;
+            btn.addEventListener('click', () => {
+              if (answeredMap[qIdx] !== undefined) return;
+              answeredMap[qIdx] = oIdx;
+              updateQuizScore();
+              renderQuiz();
+            });
+            optsWrap.appendChild(btn);
+          });
+
+          card.appendChild(optsWrap);
+
+          if (hasAnswered) {
+            const expBox = document.createElement('div');
+            const isRight = userChoice === item.correct;
+            expBox.className = `p-3 rounded-xl text-xs leading-relaxed ${
+              isRight
+                ? 'bg-emerald-100/70 dark:bg-emerald-950/50 text-emerald-900 dark:text-emerald-200'
+                : 'bg-amber-100/70 dark:bg-amber-950/50 text-amber-900 dark:text-amber-200'
+            }`;
+            expBox.innerHTML = `<strong>${isRight ? 'Correct!' : 'Review:'}</strong> ${item.explain}`;
+            card.appendChild(expBox);
+          }
+
+          quizContainer.appendChild(card);
+        });
+      }
+
+      quizResetBtn.addEventListener('click', () => {
+        Object.keys(answeredMap).forEach((k) => delete answeredMap[k]);
+        updateQuizScore();
+        renderQuiz();
+      });
+
+      renderQuiz();
+
+      /* ------------------------------------------------------------------- */
+      /* 10. INITIALIZE CANVASES & RESPONSIVE RESIZE HANDLER                 */
+      /* ------------------------------------------------------------------- */
+      window.addEventListener('load', () => {
+        redrawAllCanvases();
+        if (window.MathJax && MathJax.typesetPromise) {
+          MathJax.typesetPromise().catch(() => {});
+        }
+      });
+
+      window.addEventListener('resize', () => {
+        redrawAllCanvases();
+      });
+
+      // Immediate initial draw so canvases are ready even before full window load settles
+      redrawAllCanvases();
+    })();
+  </script>
+</body>
+</html>
